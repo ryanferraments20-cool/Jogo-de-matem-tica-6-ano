@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <title>Jogo de Matemática</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+
+  <style>
+    :root{
+      --primary:#2196f3;
+      --primary-dark:#1976d2;
+      --accent:#ffeb3b;
+      --panel-bg:rgba(0,0,0,0.6);
+      --card-bg:#ffffff;
+      --card-color:#000000;
+    }
+
+    html,body{
+      height:100%;
+      margin:0;
+      padding:0;
+    }
+
+    body{
+      font-family:Arial, Helvetica, sans-serif;
+      text-align:center;
+      background:url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQmQkYRH2LUxj3iUX1mS7JsRkdUXhkY4wuVv0NTCCfY2g&s=10')
+        no-repeat center center fixed;
+      background-size:cover;
+      color:#fff;
+      padding:20px;
+      box-sizing:border-box;
+    }
+
+    .container{
+      max-width:980px;
+      margin:0 auto;
+      background:linear-gradient(
+        180deg,
+        rgba(0,0,0,0.35),
+        rgba(0,0,0,0.45)
+      );
+      padding:18px;
+      border-radius:12px;
+      box-shadow:0 6px 18px rgba(0,0,0,0.5);
+    }
+
+    h1{
+      color:var(--accent);
+      margin:6px 0 12px 0;
+      text-shadow:2px 2px #000;
+    }
+
+    .menu{
+      margin:12px 0 18px 0;
+    }
+
+    .menu button{
+      margin:6px;
+      padding:10px 18px;
+      font-size:16px;
+      cursor:pointer;
+      border:none;
+      border-radius:8px;
+      background:var(--primary);
+      color:#fff;
+    }
+
+    .menu button:hover{
+      background:var(--primary-dark);
+    }
+
+    .panel{
+      background:var(--panel-bg);
+      padding:14px;
+      border-radius:10px;
+      margin-top:12px;
+    }
+
+    .hidden{
+      display:none;
+    }
+
+    iframe{
+      width:100%;
+      max-width:560px;
+      height:315px;
+      border:none;
+      margin:8px 0;
+      border-radius:8px;
+    }
+
+    .actions{
+      margin-top:12px;
+    }
+
+    .actions button{
+      margin:6px;
+      padding:10px 16px;
+      font-size:15px;
+      border-radius:8px;
+      border:none;
+      background:#4caf50;
+      color:#fff;
+      cursor:pointer;
+    }
+
+    .actions button.secondary{
+      background:#ff9800;
+    }
+
+    .actions button.small{
+      padding:6px 10px;
+      font-size:14px;
+      border-radius:6px;
+    }
+
+    .quiz{
+      margin-top:14px;
+    }
+
+    .option{
+      display:block;
+      margin:10px auto;
+      padding:10px;
+      width:220px;
+      max-width:90%;
+      background:var(--card-bg);
+      color:var(--card-color);
+      border:1px solid #333;
+      cursor:pointer;
+      border-radius:8px;
+      font-size:16px;
+    }
+
+    .option:hover{
+      transform:translateY(-2px);
+      box-shadow:0 6px 12px rgba(0,0,0,0.25);
+    }
+
+    .score{
+      font-size:18px;
+      margin-top:12px;
+      color:var(--accent);
+    }
+
+    .reward{
+      font-size:15px;
+      margin-top:8px;
+      color:#fff;
+      font-weight:bold;
+    }
+
+    .tabuada{
+      text-align:left;
+      margin:12px auto;
+      width:320px;
+      max-width:90%;
+      background:var(--panel-bg);
+      padding:12px;
+      border-radius:8px;
+      color:#fff;
+    }
+
+    .div-buttons{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      justify-content:center;
+      margin-top:10px;
+    }
+
+    .div-buttons button{
+      background:#673ab7;
+      padding:8px 10px;
+      border-radius:6px;
+      font-size:13px;
+      color:#fff;
+      border:none;
+      cursor:pointer;
+    }
+
+    .small-note{
+      font-size:13px;
+      color:#ddd;
+      margin-top:8px;
+    }
+
+    @media (max-width:520px){
+
+      .option{
+        width:90%;
+      }
+
+      iframe{
+        height:220px;
+      }
+
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+
+    <h1>Jogo de Matemática</h1>
+
+    <!-- MENU -->
+    <div class="menu">
+
+      <button onclick="mostrar('jogar')">
+        Jogar
+      </button>
+
+      <button onclick="mostrar('aprender')">
+        Aprender
+      </button>
+
+      <button onclick="mostrar('info')">
+        Mais Informações
+      </button>
+
+    </div>
+
+    <!-- JOGAR -->
+    <div id="jogar" class="panel hidden">
+
+      <h2>Por em prática</h2>
+
+      <div class="actions">
+
+        <button onclick="iniciarQuiz()">
+          Começar Quiz
+        </button>
+
+      </div>
+
+      <div class="small-note">
+        Escolha o tipo de quiz abaixo
+      </div>
+
+      <div class="actions" style="margin-top:10px;">
+
+        <button onclick="quizMultiplicacao()">
+          Multiplicação (2 a 10)
+        </button>
+
+        <button
+          class="secondary"
+          onclick="menuDivisao()">
+          Divisão (2 a 100)
+        </button>
+
+      </div>
+
+      <div id="quizArea" class="quiz"></div>
+
+      <div id="scoreArea" class="score"></div>
+
+    </div>
+
+    <!-- APRENDER -->
+    <div id="aprender" class="panel hidden">
+
+      <h2>Vídeos Educativos</h2>
+
+      <iframe
+        src="https://www.youtube.com/embed/nmXZiVVLRkk"
+        allowfullscreen>
+      </iframe>
+
+      <iframe
+        src="https://www.youtube.com/embed/dSvQnPtKiVg"
+        allowfullscreen>
+      </iframe>
+
+    </div>
+
+    <!-- MAIS INFORMAÇÕES -->
+    <div id="info" class="panel hidden">
+
+      <h2>Mais Informações</h2>
+
+      <p>
+        Ryan, equipe da coordenação, Raquel e professora Rosangela
+      </p>
+
+      <div style="margin-top:8px;">
+
+        <button
+          onclick="mostrarTabuada('rosangela')">
+          Rosangela
+          (Tabuada de Multiplicação)
+        </button>
+
+        <button
+          onclick="mostrarTabuada('raquel')">
+          Raquel
+          (Tabuada de Divisão de 1 a 100)
+        </button>
+
+      </div>
+
+      <div
+        id="tabuadaArea"
+        class="tabuada"
+        style="display:none;">
+      </div>
+
+    </div>
+
+  </div>
+
+  <script>
+
+    // ==========================================
+    // ESTADO DO JOGO
+    // ==========================================
+
+    let score = 0;
+    let nivel = 1;
+
+    const TEMPO_CORRECAO_MS = 4000;
+
+    // ==========================================
+    // MOSTRAR SEÇÃO
+    // ==========================================
+
+    function mostrar(secao){
+
+      document
+        .getElementById('jogar')
+        .classList.add('hidden');
+
+      document
+        .getElementById('aprender')
+        .classList.add('hidden');
+
+      document
+        .getElementById('info')
+        .classList.add('hidden');
+
+      document
+        .getElementById(secao)
+        .classList.remove('hidden');
+
+      document
+        .getElementById('quizArea')
+        .innerHTML = '';
+
+      document
+        .getElementById('scoreArea')
+        .innerHTML = '';
+
+      const tab =
+        document.getElementById('tabuadaArea');
+
+      tab.style.display = 'none';
+      tab.innerHTML = '';
+    }
+
+    // ==========================================
+    // INICIAR QUIZ GERAL
+    // ==========================================
+
+    function iniciarQuiz(){
+
+      score = 0;
+      nivel = 1;
+
+      proximaPergunta();
+    }
+
+    // ==========================================
+    // PRÓXIMA PERGUNTA
+    // ==========================================
+
+    function proximaPergunta(){
+
+      const quiz =
+        document.getElementById('quizArea');
+
+      quiz.innerHTML = '';
+
+      const tipo =
+        Math.random() < 0.5
+        ? 'multiplicacao'
+        : 'divisao';
+
+      let perguntaText;
+      let respostaCorreta;
+
+      if(tipo === 'multiplicacao'){
+
+        const a =
+          Math.floor(Math.random() * 9) + 2;
+
+        const b =
+          Math.floor(Math.random() * 9) + 2;
+
+        perguntaText =
+          `${a} x ${b}`;
+
+        respostaCorreta =
+          String(a * b);
+
+      }
+
+      else{
+
+        const a =
+          Math.floor(Math.random() * 100) + 1;
+
+        const b =
+          Math.floor(Math.random() * 99) + 2;
+
+        perguntaText =
+          `${a} ÷ ${b}`;
+
+        respostaCorreta =
+          (a / b).toFixed(2);
+
+      }
+
+      quiz.innerHTML =
+        `<h3>
+          Nível ${nivel}: Quanto é ${perguntaText}?
+        </h3>`;
+
+      criarOpcoes(
+        respostaCorreta,
+        tipo,
+        proximaPergunta
+      );
+
+      atualizarScore();
+    }
+
+    // ==========================================
+    // QUIZ DE MULTIPLICAÇÃO
+    // ==========================================
+
+    function quizMultiplicacao(){
+
+      const quiz =
+        document.getElementById('quizArea');
+
+      quiz.innerHTML = '';
+
+      const a =
+        Math.floor(Math.random() * 9) + 2;
+
+      const b =
+        Math.floor(Math.random() * 9) + 2;
+
+      const perguntaText =
+        `${a} x ${b}`;
+
+      const respostaCorreta =
+        String(a * b);
+
+      quiz.innerHTML =
+        `<h3>
+          Multiplicação:
+          Quanto é ${perguntaText}?
+        </h3>`;
+
+      criarOpcoes(
+        respostaCorreta,
+        'multiplicacao',
+        quizMultiplicacao
+      );
+
+      atualizarScore();
+    }
+
+    // ==========================================
+    // MENU DE DIVISÃO
+    // ==========================================
+
+    function menuDivisao(){
+
+      const quiz =
+        document.getElementById('quizArea');
+
+      quiz.innerHTML =
+        '<h3>Escolha uma divisão</h3>';
+
+      const container =
+        document.createElement('div');
+
+      container.className =
+        'div-buttons';
+
+      // Divisores de 2 até 100
+      for(let i = 2; i <= 100; i++){
+
+        const btn =
+          document.createElement('button');
+
+        btn.className = 'small';
+
+        btn.innerText = i;
+
+        btn.onclick = () =>
+          quizDivisao(i);
+
+        container.appendChild(btn);
+      }
+
+      quiz.appendChild(container);
+
+      atualizarScore();
+    }
+
+    // ==========================================
+    // QUIZ DE DIVISÃO
+    // ==========================================
+
+    function quizDivisao(num){
+
+      const quiz =
+        document.getElementById('quizArea');
+
+      quiz.innerHTML = '';
+
+      const a =
+        Math.floor(Math.random() * 100) + 1;
+
+      const perguntaText =
+        `${a} ÷ ${num}`;
+
+      const respostaCorreta =
+        (a / num).toFixed(2);
+
+      quiz.innerHTML =
+        `<h3>
+          Divisão por ${num}:
+          Quanto é ${perguntaText}?
+        </h3>`;
+
+      criarOpcoes(
+        respostaCorreta,
+        'divisao',
+        () => quizDivisao(num)
+      );
+
+      atualizarScore();
+    }
+
+    // ==========================================
+    // CRIAR OPÇÕES
+    // ==========================================
+
+    function criarOpcoes(
+      respostaCorreta,
+      tipo,
+      callback
+    ){
+
+      const quiz =
+        document.getElementById('quizArea');
+
+      respostaCorreta =
+        String(respostaCorreta);
+
+      const opcoes =
+        [respostaCorreta];
+
+      while(opcoes.length < 4){
+
+        let fake;
+
+        if(tipo === 'multiplicacao'){
+
+          fake =
+            String(
+              Math.floor(Math.random() * 100) + 1
+            );
+
+        }
+
+        else{
+
+          fake =
+            (Math.random() * 50)
+              .toFixed(2);
+
+        }
+
+        if(!opcoes.includes(fake)){
+          opcoes.push(fake);
+        }
+      }
+
+      opcoes.sort(
+        () => Math.random() - 0.5
+      );
+
+      opcoes.forEach(op => {
+
+        const btn =
+          document.createElement('button');
+
+        btn.className =
+          'option';
+
+        btn.innerText =
+          op;
+
+        btn.onclick = () =>
+          verificarResposta(
+            op,
+            respostaCorreta,
+            callback
+          );
+
+        quiz.appendChild(btn);
+
+      });
+    }
+
+    // ==========================================
+    // VERIFICAR RESPOSTA
+    // ==========================================
+
+    function verificarResposta(
+      op,
+      correta,
+      callback
+    ){
+
+      const quiz =
+        document.getElementById('quizArea');
+
+      const existingMsg =
+        quiz.querySelector('.feedback-msg');
+
+      if(existingMsg){
+        existingMsg.remove();
+      }
+
+      const msg =
+        document.createElement('div');
+
+      msg.className =
+        'feedback-msg';
+
+      msg.style.marginTop =
+        '8px';
+
+      msg.style.padding =
+        '8px';
+
+      msg.style.borderRadius =
+        '6px';
+
+      msg.style.fontWeight =
+        '600';
+
+      if(String(op) === String(correta)){
+
+        score += 10;
+        nivel++;
+
+        msg.style.color =
+          '#0b6623';
+
+        msg.style.background =
+          'rgba(200,230,201,0.15)';
+
+        msg.innerText =
+          'Correto! Você ganhou 10 pontos.';
+
+      }
+
+      else{
+
+        msg.style.color =
+          '#b71c1c';
+
+        msg.style.background =
+          'rgba(255,205,210,0.12)';
+
+        msg.innerText =
+          `Errado. A resposta correta é ${correta}.`;
+      }
+
+      quiz.appendChild(msg);
+
+      atualizarScore();
+
+      setTimeout(() => {
+
+        quiz.innerHTML = '';
+
+        if(typeof callback === 'function'){
+          callback();
+        }
+
+      }, TEMPO_CORRECAO_MS);
+
+    }
+
+    // ==========================================
+    // ATUALIZAR PONTUAÇÃO
+    // ==========================================
+
+    function atualizarScore(){
+
+      document
+        .getElementById('scoreArea')
+        .innerHTML =
+
+        `Pontuação: ${score}
+         &nbsp;&nbsp;|&nbsp;&nbsp;
+         Nível: ${nivel}` +
+
+        `<div class="reward">
+          🍬 As primeiras 5 pessoas que chegarem
+          ao Nível 150 ganham 2 balinhas cada uma! 🍬
+        </div>`;
+    }
+
+    // ==========================================
+    // MOSTRAR TABUADA
+    // ==========================================
+
+    function mostrarTabuada(nome){
+
+      const area =
+        document.getElementById('tabuadaArea');
+
+      area.style.display =
+        'block';
+
+      area.innerHTML = '';
+
+      if(nome === 'rosangela'){
+
+        let html =
+          '<h3>Tabuada de Multiplicação (2 a 10)</h3>' +
+          '<div>';
+
+        for(let i = 2; i <= 10; i++){
+
+          html +=
+            `<strong>${i}:</strong><br>`;
+
+          for(let j = 1; j <= 10; j++){
+
+            html +=
+              `${i} x ${j} = ${i*j}<br>`;
+          }
+
+          html += '<br>';
+        }
+
+        html += '</div>';
+
+        area.innerHTML =
+          html;
+      }
+
+      else if(nome === 'raquel'){
+
+        let html =
+          '<h3>Tabuadas de Divisão (2 a 100)</h3>';
+
+        html +=
+          '<p style="font-size:13px;color:#ddd;">' +
+          'Escolha um divisor para ver todas as divisões de 1 a 100.' +
+          '</p>';
+
+        html +=
+          '<div class="div-buttons">';
+
+        // TODOS os divisores de 2 até 100
+        for(let i = 2; i <= 100; i++){
+
+          html +=
+            `<button onclick="mostrarDivisao(${i})">
+              ${i}
+            </button>`;
+        }
+
+        html += '</div>';
+
+        area.innerHTML =
+          html;
+      }
+
+      setTimeout(() => {
+
+        area.scrollIntoView({
+          behavior:'smooth',
+          block:'center'
+        });
+
+      },150);
+    }
+
+    // ==========================================
+    // MDC
+    // ==========================================
+
+    function mdc(a,b){
+
+      while(b !== 0){
+
+        const resto =
+          a % b;
+
+        a = b;
+        b = resto;
+      }
+
+      return a;
+    }
+
+    // ==========================================
+    // FORMATAR DIVISÕES CORRETAMENTE
+    // ==========================================
+
+    function formatarDivisao(
+      dividendo,
+      divisor
+    ){
+
+      /*
+       * Primeiro reduzimos a fração.
+       *
+       * Exemplo:
+       * 2 ÷ 18 = 1 ÷ 9
+       *
+       * Como 9 possui fator 3,
+       * o resultado é uma dízima periódica.
+       */
+
+      let denominador =
+        divisor / mdc(dividendo, divisor);
+
+      /*
+       * Um decimal termina somente quando,
+       * depois de simplificado, o denominador
+       * possui apenas fatores 2 e/ou 5.
+       */
+
+      while(
+        denominador % 2 === 0
+      ){
+        denominador /= 2;
+      }
+
+      while(
+        denominador % 5 === 0
+      ){
+        denominador /= 5;
+      }
+
+      const resultado =
+        dividendo / divisor;
+
+      // Resultado exato
+      if(denominador === 1){
+
+        return `= ${
+          resultado
+            .toString()
+            .replace('.', ',')
+        }`;
+      }
+
+      /*
+       * Resultado periódico ou não terminante.
+       * O símbolo ≈ indica que o valor mostrado
+       * é uma aproximação.
+       */
+
+      return `≈ ${
+        resultado
+          .toFixed(10)
+          .replace(/0+$/, '')
+          .replace(/\.$/, '')
+          .replace('.', ',')
+      }...`;
+    }
+
+    // ==========================================
+    // MOSTRAR TABUADA DE DIVISÃO
+    // ==========================================
+
+    function mostrarDivisao(num){
+
+      const area =
+        document.getElementById('tabuadaArea');
+
+      let html =
+        `<h3>
+          Tabuada de Divisão por ${num}
+        </h3>`;
+
+      html +=
+        `<div style="
+          line-height:1.7;
+          text-align:left;
+        ">`;
+
+      /*
+       * Aqui ficam TODOS os números de 1 até 100.
+       *
+       * Exemplo para 18:
+       *
+       * 1 ÷ 18 ≈ 0,0555555555...
+       * 2 ÷ 18 ≈ 0,1111111111...
+       * 18 ÷ 18 = 1
+       * 36 ÷ 18 = 2
+       * 100 ÷ 18 ≈ 5,5555555555...
+       */
+
+      for(let i = 1; i <= 100; i++){
+
+        html +=
+          `${i} ÷ ${num}
+           ${formatarDivisao(i,num)}
+           <br>`;
+      }
+
+      html += '</div>';
+
+      area.innerHTML =
+        html;
+
+      setTimeout(() => {
+
+        area.scrollIntoView({
+          behavior:'smooth',
+          block:'center'
+        });
+
+      },150);
+    }
+
+    // ==========================================
+    // AO CARREGAR
+    // ==========================================
+
+    window.addEventListener(
+      'load',
+      () => {
+
+        mostrar('jogar');
+
+        document
+          .getElementById('scoreArea')
+          .innerHTML =
+
+          `Pontuação: 0
+           &nbsp;&nbsp;|&nbsp;&nbsp;
+           Nível: 1` +
+
+          `<div class="reward">
+            🍬 As primeiras 5 pessoas que chegarem
+            ao Nível 150 ganham 2 balinhas cada uma! 🍬
+          </div>`;
+      }
+    );
+
+  </script>
+
+</body>
+</html>
